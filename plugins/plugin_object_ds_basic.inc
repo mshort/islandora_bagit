@@ -6,6 +6,9 @@
  *
  * Registers all the datastreams in an Islandora object so they are
  * copied into the 'data' directory.
+ *
+ * Added string replace on .bin to .xml for known metadata datastreams
+ * See https://jira.duraspace.org/browse/ISLANDORA-1237 for explanation.
  */
 
 /**
@@ -32,11 +35,13 @@ function islandora_bagit_plugin_object_ds_basic_init($islandora_object, $tmp_ds_
     // Add each file in the directory to $files_to_add.
     $source_file_to_add = $ds_filename;
     if (file_exists($source_file_to_add) && is_file($source_file_to_add)) {
+      $bin = array("MODS.bin","DC.bin","TECHMD.bin");
+      $xml = array("MODS.xml","DC.xml","TECHMD.xml");
       $files_to_add[] = array(
         'source' => $source_file_to_add,
         // We use basename here since there are no subdirectories in the Bag's
         // 'data' directory.
-        'dest' => basename($ds_filename),
+        'dest' =>  str_replace($bin, $xml, basename($ds_filename)),
       );
     }
   }
